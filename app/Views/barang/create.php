@@ -30,7 +30,7 @@
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Kondisi</label>
                         <select name="kondisi" class="form-select bg-dark text-white border-secondary">
-                            <option value="Bagus">Bagus</option>
+                            <option value="Baik">Bagus</option>
                             <option value="Rusak Ringan">Rusak Ringan</option>
                         </select>
                     </div>
