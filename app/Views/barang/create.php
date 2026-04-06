@@ -32,6 +32,7 @@
                         <select name="kondisi" class="form-select bg-dark text-white border-secondary">
                             <option value="Baik">Bagus</option>
                             <option value="Rusak Ringan">Rusak Ringan</option>
+                            <option value="Rusak Berat">Rusak Berat</option>
                         </select>
                     </div>
 
