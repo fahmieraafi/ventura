@@ -9,7 +9,7 @@
         <div class="card-body p-4">
             <form action="<?= base_url('barang/update/' . $barang['id_barang']) ?>" method="post" enctype="multipart/form-data">
                 <?= csrf_field(); ?>
-                
+
                 <input type="hidden" name="fotoLama" value="<?= $barang['foto_barang'] ?>">
 
                 <div class="row">
