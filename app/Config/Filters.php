@@ -16,13 +16,8 @@ use CodeIgniter\Filters\SecureHeaders;
 class Filters extends BaseFilters
 {
     /**
-     * Configures aliases for Filter classes to
-     * make reading things nicer and simpler.
-     *
-     * @var array<string, class-string|list<class-string>>
-     *
-     * [filter_name => classname]
-     * or [filter_name => [classname1, classname2, ...]]
+     * Aliases: Nama pendek untuk class filter.
+     * Digunakan agar pemanggilan di bagian 'globals' atau 'filters' lebih ringkas.
      */
     public array $aliases = [
         'csrf'          => CSRF::class,
@@ -35,49 +30,43 @@ class Filters extends BaseFilters
         'pagecache'     => PageCache::class,
         'performance'   => PerformanceMetrics::class,
 
-'auth' => \App\Filters\AuthFilter::class,
-    'role' => \App\Filters\RoleFilter::class,
-
+        // Custom Filter buatan sendiri untuk sistem Login & Hak Akses
+        'auth' => \App\Filters\AuthFilter::class,
+        'role' => \App\Filters\RoleFilter::class,
     ];
 
     /**
-     * List of special required filters.
-     *
-     * The filters listed here are special. They are applied before and after
-     * other kinds of filters, and always applied even if a route does not exist.
-     *
-     * Filters set by default provide framework functionality. If removed,
-     * those functions will no longer work.
-     *
-     * @see https://codeigniter.com/user_guide/incoming/filters.html#provided-filters
-     *
-     * @var array{before: list<string>, after: list<string>}
+     * Required: Filter yang WAJIB dijalankan oleh sistem secara internal.
+     * PERINGATAN: Jangan memasukkan 'forcehttps' di sini jika masih di localhost 
+     * untuk menghindari error Class Not Found di beberapa versi CI4.
      */
     public array $required = [
         'before' => [
-            'forcehttps', // Force Global Secure Requests
-            'pagecache',  // Web Page Caching
+            // 'forcehttps', 
         ],
         'after' => [
-            'pagecache',   // Web Page Caching
-            'performance', // Performance Metrics
-            'toolbar',     // Debug Toolbar
+            'performance',
+            'toolbar',
         ],
     ];
 
     /**
-     * List of filter aliases that are always
-     * applied before and after every request.
-     *
-     * @var array{
-     *     before: array<string, array{except: list<string>|string}>|list<string>,
-     *     after: array<string, array{except: list<string>|string}>|list<string>
-     * }
+     * Globals: Filter yang otomatis berjalan di SETIAP request URL.
      */
     public array $globals = [
         'before' => [
+            // Mengaktifkan fitur keamanan CSRF secara global
+            'csrf' => [
+                'except' => [
+                    /**
+                     * PENTING: Rute 'barang/hapusFotoSatuan' dikecualikan karena 
+                     * AJAX Fetch POST seringkali kesulitan mengirimkan token CSRF secara manual.
+                     * Ini mencegah error 403 (Forbidden) saat klik tombol X merah.
+                     */
+                    'barang/hapusFotoSatuan'
+                ]
+            ],
             // 'honeypot',
-            // 'csrf',
             // 'invalidchars',
         ],
         'after' => [
@@ -87,28 +76,28 @@ class Filters extends BaseFilters
     ];
 
     /**
-     * List of filter aliases that works on a
-     * particular HTTP method (GET, POST, etc.).
-     *
-     * Example:
-     * 'POST' => ['foo', 'bar']
-     *
-     * If you use this, you should disable auto-routing because auto-routing
-     * permits any HTTP method to access a controller. Accessing the controller
-     * with a method you don't expect could bypass the filter.
-     *
-     * @var array<string, list<string>>
+     * Methods: Menjalankan filter berdasarkan metode HTTP (GET, POST, dll).
      */
     public array $methods = [];
 
     /**
-     * List of filter aliases that should run on any
-     * before or after URI patterns.
-     *
-     * Example:
-     * 'isLoggedIn' => ['before' => ['account/*', 'profiles/*']]
-     *
-     * @var array<string, array<string, list<string>>>
+     * Filters: Menjalankan filter pada rute (URL) yang spesifik saja.
      */
-    public array $filters = [];
+    public array $filters = [
+        /**
+         * Filter 'auth' (Login Check):
+         * Memastikan user harus login terlebih dahulu sebelum bisa mengakses:
+         * - Halaman Daftar Barang
+         * - Semua fitur tambah/edit/hapus (barang/*)
+         * - Halaman Dashboard
+         */
+        'auth' => [
+            'before' => [
+                'barang',
+                'barang/*',
+                'dashboard',
+                'dashboard/*'
+            ]
+        ],
+    ];
 }

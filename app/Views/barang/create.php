@@ -30,15 +30,16 @@
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Kondisi</label>
                         <select name="kondisi" class="form-select bg-dark text-white border-secondary">
-                            <option value="Baik">Bagus</option>
+                            <option value="Baik">Baik</option>
                             <option value="Rusak Ringan">Rusak Ringan</option>
                             <option value="Rusak Berat">Rusak Berat</option>
                         </select>
                     </div>
 
                     <div class="col-md-12 mb-4">
-                        <label class="form-label">Foto Barang</label>
-                        <input type="file" name="foto_barang" class="form-control bg-dark text-white border-secondary">
+                        <label class="form-label">Foto Barang (Bisa pilih lebih dari satu)</label>
+                        <input type="file" name="foto_barang[]" class="form-control bg-dark text-white border-secondary" multiple>
+                        <small class="text-white-50 mt-1 d-block italic">* Tahan tombol Ctrl untuk memilih beberapa foto sekaligus.</small>
                     </div>
                 </div>
 

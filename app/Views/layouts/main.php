@@ -12,8 +12,8 @@
 
     <style>
         body {
-            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), 
-                        url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+                url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -23,31 +23,59 @@
             display: flex;
             height: 100vh;
             margin: 0;
-            overflow: hidden;
+            /* overflow: hidden;  <-- HAPUS INI agar modal bisa berfungsi normal */
         }
 
-        /* --- ANIMASI SIDEBAR --- */
+        /* --- PERBAIKAN SIDEBAR --- */
         .sidebar {
             width: 260px;
-            background: rgba(15, 23, 42, 0.8); 
+            background: rgba(15, 23, 42, 0.8);
             backdrop-filter: blur(15px);
             padding: 20px;
             border-right: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             flex-direction: column;
-            z-index: 1050;
-            /* PEMBERITAHUAN: Transition ini memberikan efek animasi geser selama 0.4 detik */
+            z-index: 1000;
+            /* Turunkan sedikit agar tidak balapan dengan modal */
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             left: 0;
             position: relative;
         }
 
-        /* PEMBERITAHUAN: Class 'active' ini akan memicu sidebar bergeser ke kiri (sembunyi) */
         .sidebar.active {
             margin-left: -260px;
             opacity: 0;
         }
 
+        /* --- PERBAIKAN WRAPPER --- */
+        .main-wrapper {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            /* Mencegah overflow table merusak layout */
+            position: relative;
+        }
+
+        .content-scroll {
+            padding: 30px;
+            overflow-y: auto;
+            flex-grow: 1;
+            /* Hapus atau pastikan z-index tidak mengunci modal */
+        }
+
+        /* --- SOLUSI AMPUH UNTUK MODAL --- */
+        .modal {
+            z-index: 2000 !important;
+            /* Paksa modal di depan segala hal */
+        }
+
+        .modal-backdrop {
+            z-index: 1900 !important;
+            /* Backdrop di bawah modal sedikit */
+        }
+
+        /* Styling tambahan bawaan kamu */
         .sidebar-brand {
             font-size: 22px;
             font-weight: 600;
@@ -70,7 +98,6 @@
             transition: all 0.3s ease;
         }
 
-        /* PEMBERITAHUAN: Animasi hover pada menu agar sedikit bergeser ke kanan saat disentuh mouse */
         .sidebar-menu a:hover {
             background: rgba(255, 255, 255, 0.1);
             color: #fff;
@@ -86,16 +113,7 @@
             justify-content: space-between;
             padding: 0 30px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            position: relative;
-            z-index: 1100;
-        }
-
-        /* PEMBERITAHUAN: Animasi rotasi pada tombol hamburger saat diklik */
-        #toggleSidebar i {
-            transition: transform 0.3s ease;
-        }
-        .rotate-icon {
-            transform: rotate(90deg);
+            z-index: 1010;
         }
 
         .user-profile-nav {
@@ -113,24 +131,6 @@
             border-radius: 8px;
             object-fit: cover;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: transform 0.3s ease;
-        }
-        .user-avatar:hover {
-            transform: scale(1.1); /* Foto profil membesar sedikit saat hover */
-        }
-
-        .main-wrapper {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .content-scroll {
-            padding: 30px;
-            overflow-y: auto;
-            flex-grow: 1;
         }
 
         .content-card {
@@ -139,14 +139,19 @@
             padding: 25px;
             border-radius: 15px;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            position: relative;
-            /* PEMBERITAHUAN: Muncul perlahan (fade in) saat halaman dimuat */
             animation: fadeIn 0.8s ease;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 </head>
@@ -168,18 +173,15 @@
             </button>
 
             <div class="dropdown">
-                <a class="user-profile-nav dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <a class="user-profile-nav dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                     <img src="<?= base_url('uploads/users/' . (session()->get('foto') ?: 'default.png')) ?>" class="user-avatar" alt="User">
                     <span class="d-none d-md-inline"><?= session()->get('username') ?></span>
                 </a>
-
                 <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark">
+                    <li><a class="dropdown-item" href="<?= base_url('users/edit/' . session()->get('id_user')) ?>"><i class="bi bi-person me-2"></i>Profil</a></li>
                     <li>
-                        <a class="dropdown-item" href="<?= base_url('users/edit/' . session()->get('id_user')) ?>">
-                            <i class="bi bi-person me-2"></i>Profil
-                        </a>
+                        <hr class="dropdown-divider border-secondary">
                     </li>
-                    <li><hr class="dropdown-divider border-secondary"></li>
                     <li><a class="dropdown-item text-danger" href="<?= base_url('logout') ?>"><i class="bi bi-box-arrow-right me-2"></i>Keluar</a></li>
                 </ul>
             </div>
@@ -193,20 +195,16 @@
     </div>
 
     <script src="<?= base_url('assets/js/bootstrap.bundle.min.js') ?>"></script>
-
     <script>
         const sidebar = document.getElementById('sidebar');
         const toggleBtn = document.getElementById('toggleSidebar');
         const icon = toggleBtn.querySelector('i');
 
-        // PEMBERITAHUAN: Fungsi ini menjalankan animasi saat tombol diklik
         toggleBtn.addEventListener('click', function() {
-            // Toggle class 'active' untuk menggeser sidebar
             sidebar.classList.toggle('active');
-            
-            // Toggle class 'rotate-icon' untuk memutar ikon hamburger
             icon.classList.toggle('rotate-icon');
         });
     </script>
 </body>
+
 </html>

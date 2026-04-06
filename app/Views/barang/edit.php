@@ -17,31 +17,48 @@
                         <label class="form-label">Nama Barang</label>
                         <input type="text" name="nama_barang" class="form-control bg-dark text-white border-secondary" value="<?= $barang['nama_barang'] ?>" required>
                     </div>
-
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Harga Sewa / Hari</label>
                         <input type="number" name="harga_sewa" class="form-control bg-dark text-white border-secondary" value="<?= $barang['harga_sewa'] ?>" required>
                     </div>
-
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Stok</label>
                         <input type="number" name="stok" class="form-control bg-dark text-white border-secondary" value="<?= $barang['stok'] ?>" required>
                     </div>
-
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Kondisi</label>
                         <select name="kondisi" class="form-select bg-dark text-white border-secondary">
-                            <option value="Bagus" <?= $barang['kondisi'] == 'Bagus' ? 'selected' : '' ?>>Bagus</option>
+                            <option value="Baik" <?= $barang['kondisi'] == 'Baik' ? 'selected' : '' ?>>Baik</option>
                             <option value="Rusak Ringan" <?= $barang['kondisi'] == 'Rusak Ringan' ? 'selected' : '' ?>>Rusak Ringan</option>
+                            <option value="Rusak Berat" <?= $barang['kondisi'] == 'Rusak Berat' ? 'selected' : '' ?>>Rusak Berat</option>
                         </select>
                     </div>
 
                     <div class="col-md-12 mb-4">
-                        <label class="form-label">Foto Barang (Biarkan kosong jika tidak ingin ganti)</label>
-                        <div class="d-flex align-items-center gap-3">
-                            <img src="<?= base_url('uploads/barang/' . ($barang['foto_barang'] ?: 'tenda.jpg')) ?>" width="80" class="rounded shadow">
-                            <input type="file" name="foto_barang" class="form-control bg-dark text-white border-secondary">
+                        <label class="form-label d-block">Foto Barang Saat Ini (Klik X untuk menghapus)</label>
+                        <div class="d-flex flex-wrap gap-3 mb-3 p-3 rounded" style="background: rgba(0,0,0,0.2);">
+                            <?php
+                            // Kita pecah string nama file (contoh: "img1.jpg,img2.jpg") menjadi array
+                            $fotos = explode(',', $barang['foto_barang']);
+                            foreach ($fotos as $key => $f) :
+                                if ($f != '' && $f != 'tenda.jpg') : // Jangan hapus default
+                            ?>
+                                    <div class="position-relative" id="foto-container-<?= $key ?>">
+                                        <img src="<?= base_url('uploads/barang/' . $f) ?>" width="100" height="100" class="rounded object-fit-cover border border-secondary shadow">
+
+                                        <button type="button"
+                                            class="btn btn-danger btn-sm position-absolute top-0 end-0 rounded-circle p-0"
+                                            style="width:22px; height:22px; transform: translate(30%, -30%);"
+                                            onclick="hapusFotoSatu('<?= $f ?>', '<?= $barang['id_barang'] ?>', '<?= $key ?>')">
+                                            <i class="bi bi-x"></i>
+                                        </button>
+                                    </div>
+                            <?php endif;
+                            endforeach; ?>
                         </div>
+
+                        <label class="form-label">Tambah Foto Baru (Opsional)</label>
+                        <input type="file" name="foto_barang[]" class="form-control bg-dark text-white border-secondary" multiple>
                     </div>
                 </div>
 
@@ -53,4 +70,37 @@
         </div>
     </div>
 </div>
+
+<script>
+    function hapusFotoSatu(namaFile, idBarang, elemen) {
+        if (confirm("Hapus foto ini?")) {
+            let formData = new FormData();
+            formData.append('nama_file', namaFile);
+            formData.append('id_barang', idBarang);
+
+            // PASTIKAN URL INI SESUAI: base_url + /barang/hapusFotoSatuan
+            fetch('<?= base_url('barang/hapusFotoSatuan') ?>', {
+                    method: 'POST',
+                    body: formData,
+                    // Tambahkan ini agar CI4 tidak bingung
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        elemen.parentElement.remove(); // Hapus kotak foto dari layar
+                    } else {
+                        alert("Gagal: " + data.msg);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert("Terjadi kesalahan jaringan.");
+                });
+        }
+
+    }
+</script>
 <?= $this->endSection() ?>

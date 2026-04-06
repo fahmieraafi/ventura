@@ -39,4 +39,5 @@ $routes->post('barang/store', 'Barang::store');
 
 $routes->get('barang/edit/(:num)', 'Barang::edit/$1');
 $routes->post('barang/update/(:num)', 'Barang::update/$1');
-
+$routes->get('/barang/delete/(:num)', 'Barang::delete/$1'); // aksi hapus user
+$routes->post('barang/hapusFotoSatuan', 'Barang::hapusFotoSatuan');
