@@ -32,8 +32,6 @@
     </div>
 </div>
 
-
-
 <div class="card border-0 shadow-lg overflow-hidden" style="border-radius: 15px;">
     <div class="table-responsive">
         <table class="table table-hover table-light mb-0 align-middle">
@@ -72,6 +70,7 @@
                         </td>
 
                         <td class="fw-semibold text-secondary"><?= $t['nama_barang']; ?>
+                            <br>
                             <small class="text-muted">Durasi:
                                 <?php
                                 $awal  = strtotime($t['tgl_pinjam']);
@@ -81,6 +80,7 @@
                                 ?>
                             </small>
                         </td>
+
                         <td><span class="badge bg-light text-dark border"><i class="bi bi-calendar-event me-1"></i> <?= date('d M Y', strtotime($t['tgl_pinjam'])); ?></span></td>
                         <td><span class="badge bg-light text-dark border"><i class="bi bi-calendar-event me-1"></i> <?= date('d M Y', strtotime($t['tgl_kembali'])); ?></span></td>
 

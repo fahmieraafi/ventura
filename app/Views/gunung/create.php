@@ -19,14 +19,17 @@
                                 <label class="form-label small fw-bold">Nama Gunung</label>
                                 <input type="text" name="nama_gunung" class="form-control rounded-pill" placeholder="Contoh: Gunung Gede" required>
                             </div>
+
                             <div class="col-md-6">
                                 <label class="form-label small fw-bold">Lokasi</label>
                                 <input type="text" name="lokasi" class="form-control rounded-pill" placeholder="Contoh: Jawa Barat" required>
                             </div>
+
                             <div class="col-md-6">
                                 <label class="form-label small fw-bold">Ketinggian (mdpl)</label>
                                 <input type="number" name="ketinggian" class="form-control rounded-pill" placeholder="Contoh: 2958" required>
                             </div>
+
                             <div class="col-md-6">
                                 <label class="form-label small fw-bold">Status Jalur</label>
                                 <select name="status" class="form-select rounded-pill" required>
@@ -34,21 +37,26 @@
                                     <option value="Tutup">Tutup</option>
                                 </select>
                             </div>
+
                             <div class="col-12">
                                 <label class="form-label small fw-bold">Foto Gunung (Bisa pilih banyak)</label>
                                 <input type="file" name="foto[]" class="form-control" accept="image/*" multiple required>
                                 <small class="text-muted">Format: JPG, PNG, JPEG. Maks 2MB per file. Anda bisa memilih lebih dari satu foto.</small>
                             </div>
+
                             <div class="col-12">
                                 <label class="form-label small fw-bold">Deskripsi Pendakian</label>
                                 <textarea name="deskripsi" class="form-control" rows="5" placeholder="Tuliskan info lengkap jalur pendakian..." style="border-radius: 15px;"></textarea>
                             </div>
+
                         </div>
                     </div>
+
                     <div class="card-footer bg-light border-0 p-4 text-end" style="border-bottom-left-radius: 20px; border-bottom-right-radius: 20px;">
                         <a href="<?= base_url('gunung') ?>" class="btn btn-light rounded-pill px-4 me-2">Batal</a>
                         <button type="submit" class="btn btn-info text-white rounded-pill px-4 shadow-sm">Simpan Data</button>
                     </div>
+
                 </form>
             </div>
         </div>

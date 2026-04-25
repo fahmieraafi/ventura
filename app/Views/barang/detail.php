@@ -8,9 +8,7 @@
 
                 <div class="text-center mb-4">
                     <?php
-                    $listFoto = explode(',', $barang['foto_barang']);
-                    ?>
-
+                    $listFoto = explode(',', $barang['foto_barang']); ?>
                     <?php if (count($listFoto) > 1) : ?>
                         <div id="carouselDetail" class="carousel slide shadow-sm rounded" data-bs-ride="carousel">
                             <div class="carousel-inner">
@@ -152,7 +150,6 @@
         if (e.target.classList.contains('btn-pinjam-sekarang')) {
             const id = e.target.getAttribute('data-id');
             const nama = e.target.getAttribute('data-nama');
-
             document.getElementById('id_barang_modal').value = id;
             document.getElementById('nama_barang_modal').value = nama;
         }

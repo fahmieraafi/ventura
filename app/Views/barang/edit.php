@@ -61,8 +61,7 @@
                             <?php
                             $fotos = explode(',', $barang['foto_barang']);
                             foreach ($fotos as $key => $f) :
-                                if ($f != '' && $f != 'tenda.jpg') :
-                            ?>
+                                if ($f != '' && $f != 'tenda.jpg') : ?>
                                     <div class="position-relative foto-wrapper">
                                         <img src="<?= base_url('uploads/barang/' . $f) ?>" width="100" height="100" class="rounded object-fit-cover border border-secondary shadow">
                                         <button type="button"

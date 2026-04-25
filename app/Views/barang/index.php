@@ -154,10 +154,6 @@
                             <label class="form-label fw-bold text-dark small">Alat yang disewa:</label>
                             <input type="text" id="nama_barang_modal" class="form-control bg-light border-0 fw-bold text-primary" readonly>
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <label class="form-label fw-bold text-dark small">Jumlah</label>
-                            <input type="number" name="jumlah" id="jumlah_modal" class="form-control shadow-sm" value="1" min="1" required>
-                        </div>
                     </div>
 
                     <div class="row">

@@ -8,30 +8,34 @@ use App\Models\BarangModel;
 
 class Transaksi extends BaseController
 {
+    // Properti untuk menampung model agar bisa diakses di seluruh fungsi
     protected $transaksiModel;
     protected $barangModel;
 
     public function __construct()
     {
-        // Menyiapkan model agar bisa digunakan di semua fungsi dalam class ini
+        // Inisialisasi model saat class pertama kali dipanggil
         $this->transaksiModel = new TransaksiModel();
         $this->barangModel    = new BarangModel();
     }
 
     /**
-     * Menampilkan daftar transaksi di halaman Admin.
-     * Sudah termasuk fitur pencarian berdasarkan nama user atau barang.
+     * FUNGSI INDEX
+     * Menampilkan daftar transaksi dan mengelola data notifikasi lonceng.
      */
     public function index()
     {
+        // Mengambil input pencarian dari user (jika ada)
         $keyword = $this->request->getVar('cari');
+        // Mendapatkan tanggal hari ini untuk pengecekan keterlambatan
         $today = date('Y-m-d');
 
-        // Query utama untuk tabel transaksi
+        // Menyiapkan query dasar: mengambil data transaksi digabung dengan nama barang dan nama user
         $query = $this->transaksiModel->select('transaksi.*, barang.nama_barang, users.nama as nama_user, users.no_wa')
             ->join('barang', 'barang.id_barang = transaksi.id_barang')
             ->join('users', 'users.id_user = transaksi.id_user');
 
+        // Jika user melakukan pencarian, tambahkan filter LIKE ke query
         if ($keyword) {
             $query->groupStart()
                 ->like('barang.nama_barang', $keyword)
@@ -43,7 +47,7 @@ class Transaksi extends BaseController
 
         // --- LOGIKA UNTUK NOTIFIKASI LONCENG ---
 
-        // 1. Ambil DAFTAR orang yang terlambat (untuk dimunculkan di dropdown)
+        // 1. Ambil daftar user yang telat mengembalikan (tgl_kembali < hari ini & status masih dipinjam)
         $listTerlambat = $this->transaksiModel->select('transaksi.*, users.nama as nama_user, barang.nama_barang')
             ->join('users', 'users.id_user = transaksi.id_user')
             ->join('barang', 'barang.id_barang = transaksi.id_barang')
@@ -51,7 +55,7 @@ class Transaksi extends BaseController
             ->where('status_transaksi', 'Dipinjam')
             ->findAll();
 
-        // 2. Ambil DAFTAR pesanan baru (Booking) yang belum dibaca admin
+        // 2. Ambil daftar pesanan baru (Booking) yang belum dikonfirmasi/dibaca oleh admin
         $notifList = $this->transaksiModel->select('transaksi.*, users.nama as nama_user, barang.nama_barang')
             ->join('users', 'users.id_user = transaksi.id_user')
             ->join('barang', 'barang.id_barang = transaksi.id_barang')
@@ -59,51 +63,59 @@ class Transaksi extends BaseController
             ->where('status_transaksi', 'Booking')
             ->findAll();
 
+        // Menyiapkan data yang akan dikirim ke halaman View
         $data = [
             'title'             => 'Kelola Transaksi - Admin Ventura',
             'transaksi'         => $query->orderBy('transaksi.created_at', 'DESC')->findAll(),
             'cari'              => $keyword,
 
-            // Data untuk Lonceng Navbar
+            // Mengirim data notifikasi ke Lonceng di Navbar
             'total_terlambat'   => count($listTerlambat),
-            'list_terlambat'    => $listTerlambat, // WAJIB ADA agar bisa di-foreach di View
+            'list_terlambat'    => $listTerlambat,
             'notif_count'       => count($notifList),
-            'notif_list'        => $notifList,     // WAJIB ADA
+            'notif_list'        => $notifList,
 
+            // Menghitung jumlah barang yang sedang dibawa user (status Dipinjam)
             'barang_dipinjam'   => $this->transaksiModel->where('status_transaksi', 'Dipinjam')->countAllResults()
         ];
 
+        // Memanggil file view index di folder admin/transaksi
         return view('admin/transaksi/index', $data);
     }
 
     /**
-     * FUNGSI NOTIFIKASI: Menandai notifikasi sebagai "sudah dibaca" oleh admin.
-     * Fungsi inilah yang akan menghilangkan angka di lonceng Admin saat tombol centang diklik.
+     * FUNGSI markAsRead
+     * Digunakan untuk menghilangkan notifikasi merah di lonceng Admin.
      */
     public function markAsRead($id)
     {
-        // Mengubah kolom is_read menjadi 1 agar tidak muncul lagi di notifikasi lonceng Admin
+        // Mengubah status kolom is_read menjadi 1 (sudah dibaca)
         $this->transaksiModel->update($id, ['is_read' => 1]);
 
+        // Kembali ke halaman sebelumnya dengan pesan sukses
         return redirect()->back()->with('success', 'Notifikasi berhasil dihapus dari lonceng.');
     }
 
     /**
-     * Menghitung denda secara otomatis tanpa mengubah status transaksi.
-     * Berguna jika admin ingin menginfokan denda sementara barang masih dipinjam.
+     * FUNGSI hitungDenda
+     * Menghitung denda secara otomatis berdasarkan tarif Rp 20.000 per hari.
      */
     public function hitungDenda($id)
     {
+        // Mencari data transaksi berdasarkan ID
         $transaksi = $this->transaksiModel->find($id);
         if (!$transaksi) return redirect()->back()->with('error', 'Transaksi tidak ditemukan');
 
+        // Konversi tanggal ke format angka (detik) untuk perhitungan matematika
         $tgl_kembali_seharusnya = strtotime($transaksi['tgl_kembali']);
         $tgl_sekarang = time();
         $denda = 0;
         $tarif_per_hari = 20000;
 
+        // Jika waktu sekarang sudah melewati tanggal seharusnya kembali
         if ($tgl_sekarang > $tgl_kembali_seharusnya) {
             $selisih_detik = $tgl_sekarang - $tgl_kembali_seharusnya;
+            // Menghitung berapa hari keterlambatannya (detik dibagi jumlah detik dalam sehari)
             $keterlambatan = floor($selisih_detik / (60 * 60 * 24));
 
             if ($keterlambatan > 0) {
@@ -111,7 +123,7 @@ class Transaksi extends BaseController
             }
         }
 
-        // Simpan denda, status transaksi tidak berubah (tetap dipinjam/booking)
+        // Menyimpan hasil perhitungan denda ke database
         $this->transaksiModel->update($id, [
             'denda' => $denda
         ]);
@@ -120,20 +132,20 @@ class Transaksi extends BaseController
     }
 
     /**
-     * Mengubah status transaksi secara cepat (tombol Ambil/Selesai/Dipinjam).
-     * Juga menangani penambahan/pengurangan stok barang secara otomatis.
+     * FUNGSI updateStatus
+     * Fungsi utama untuk alur barang (Booking -> Dipinjam -> Selesai).
      */
     public function updateStatus($id, $status)
     {
+        // Cari transaksi yang dimaksud
         $transaksi = $this->transaksiModel->find($id);
         if (!$transaksi) return redirect()->back()->with('error', 'Transaksi tidak ditemukan');
 
         $id_barang = $transaksi['id_barang'];
         $dataUpdate = ['status_transaksi' => $status];
 
-        // Jika status diubah ke Dipinjam, kurangi stok barang
+        // LOGIKA: Jika barang diambil (Dipinjam), stok di gudang berkurang 1
         if ($status == 'Dipinjam') {
-
             $barang = $this->barangModel->find($id_barang);
             if ($barang) {
                 $this->barangModel->update($id_barang, [
@@ -141,7 +153,7 @@ class Transaksi extends BaseController
                 ]);
             }
         }
-        // Jika status diubah ke Selesai, hitung denda lunas dan kembalikan stok
+        // LOGIKA: Jika barang dipulangkan (Selesai), hitung denda akhir dan tambah stok gudang 1
         elseif ($status == 'Selesai') {
             $tgl_kembali_seharusnya = strtotime($transaksi['tgl_kembali']);
             $tgl_sekarang = time();
@@ -154,10 +166,12 @@ class Transaksi extends BaseController
                 if ($keterlambatan > 0) $denda = $keterlambatan * $tarif_per_hari;
             }
 
+            // Mencatat data pengembalian
             $dataUpdate['tgl_dikembalikan']  = date('Y-m-d');
             $dataUpdate['denda']             = $denda;
-            $dataUpdate['is_read']           = 1; // Otomatis tandai dibaca jika sudah selesai
+            $dataUpdate['is_read']           = 1; // Otomatis hilangkan dari notifikasi booking
 
+            // Menambah stok barang kembali karena barang sudah ada di gudang
             $barang = $this->barangModel->find($id_barang);
             if ($barang) {
                 $this->barangModel->update($id_barang, [
@@ -166,15 +180,18 @@ class Transaksi extends BaseController
             }
         }
 
+        // Eksekusi update status transaksi
         $this->transaksiModel->update($id, $dataUpdate);
         return redirect()->to('admin/transaksi')->with('success', "Status berhasil diperbarui menjadi $status");
     }
 
     /**
-     * Menampilkan halaman form edit transaksi secara manual.
+     * FUNGSI edit
+     * Menampilkan form edit untuk penyesuaian manual data transaksi.
      */
     public function edit($id)
     {
+        // Mengambil data detail transaksi untuk ditampilkan di form
         $transaksi = $this->transaksiModel->select('transaksi.*, barang.nama_barang, users.nama as nama_user')
             ->join('barang', 'barang.id_barang = transaksi.id_barang')
             ->join('users', 'users.id_user = transaksi.id_user')
@@ -191,14 +208,15 @@ class Transaksi extends BaseController
     }
 
     /**
-     * Menyimpan perubahan dari form edit manual (termasuk input denda manual).
+     * FUNGSI update
+     * Menyimpan hasil edit manual (misalnya jika denda diubah manual oleh admin).
      */
     public function update($id)
     {
         $transaksiLama = $this->transaksiModel->find($id);
         $statusBaru = $this->request->getPost('status_transaksi');
 
-        // Mengatur stok barang jika admin mengubah status secara manual lewat form edit
+        // Logika penyesuaian stok jika status diubah manual lewat form edit
         if ($transaksiLama['status_transaksi'] != 'Selesai' && $statusBaru == 'Selesai') {
             $barang = $this->barangModel->find($transaksiLama['id_barang']);
             $this->barangModel->update($transaksiLama['id_barang'], ['stok' => $barang['stok'] + 1]);
@@ -207,6 +225,7 @@ class Transaksi extends BaseController
             $this->barangModel->update($transaksiLama['id_barang'], ['stok' => $barang['stok'] - 1]);
         }
 
+        // Menyimpan data denda dan status baru
         $this->transaksiModel->update($id, [
             'denda'             => $this->request->getPost('denda'),
             'status_transaksi'  => $statusBaru
@@ -216,7 +235,8 @@ class Transaksi extends BaseController
     }
 
     /**
-     * Menghapus data transaksi dari database secara permanen.
+     * FUNGSI delete
+     * Menghapus data transaksi (digunakan jika ada pembatalan permanen atau data sampah).
      */
     public function delete($id)
     {

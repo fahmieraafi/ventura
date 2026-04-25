@@ -18,7 +18,6 @@
             background-position: center;
             background-attachment: fixed;
             color: white;
-            /* Tulisan semua jadi putih */
             font-family: 'Poppins', sans-serif;
             min-height: 100vh;
         }
@@ -72,7 +71,6 @@
         .navbar-brand img {
             height: 50px;
             filter: brightness(0) invert(1);
-            /* Logo jadi putih */
         }
 
         .navbar-brand span {
@@ -82,7 +80,7 @@
             color: white;
         }
 
-        /* Hero Tulisan Melayang - Presisi Tengah */
+        /* Hero Tulisan Melayang */
         .hero-floating {
             display: flex;
             flex-direction: column;
@@ -119,7 +117,6 @@
             height: 60px;
             border-radius: 50px;
             padding-left: 30px;
-            /* Transparan Efek Kaca */
             background: rgba(255, 255, 255, 0.2) !important;
             backdrop-filter: blur(10px);
             border: 2px solid rgba(255, 255, 255, 0.3) !important;
@@ -152,7 +149,6 @@
             width: 75px;
             height: 75px;
             border-radius: 50%;
-            /* Lingkaran Transparan */
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(5px);
             border: 2px solid rgba(255, 255, 255, 0.2);
@@ -174,7 +170,7 @@
             border-color: white;
         }
 
-        /* Card Produk - Perbaikan Foto */
+        /* Card Produk */
         .card-barang {
             background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(10px);
@@ -187,7 +183,6 @@
         .img-wrapper {
             width: 100%;
             height: 200px;
-            /* Tinggi tetap agar tidak rusak */
             overflow: hidden;
         }
 
@@ -195,7 +190,6 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            /* Memastikan foto penuh dan tidak gepeng */
         }
 
         .card-body h6 {
@@ -205,7 +199,6 @@
 
         .price-tag {
             color: white;
-            /* Harga jadi putih */
             font-weight: 700;
             opacity: 0.9;
         }
@@ -238,6 +231,53 @@
             color: white;
             font-weight: bold;
             text-decoration: none;
+        }
+
+        /* --- ANIMASI LOGIN BARU --- */
+        .modal-content {
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Efek Input Bercahaya */
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.25) !important;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+            border-color: white !important;
+            transform: scale(1.02);
+            transition: all 0.3s ease;
+        }
+
+        /* Efek Tombol Masuk Bergetar Tipis (Glow) */
+        .btn-light:hover {
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+            transform: translateY(-2px);
+            letter-spacing: 1px;
+        }
+
+        /* Animasi Latar Belakang Modal (Partikel Sederhana) */
+        .login-bg-shapes div {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            z-index: -1;
+            animation: float 10s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
         }
     </style>
 </head>
@@ -332,29 +372,38 @@
         </div>
     </div>
 
-
     <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0" style="border-radius: 20px; background: rgba(0,0,0,0.8); backdrop-filter: blur(15px); color: white;">
-                <div class="modal-body p-5 text-center">
-                    <h4 class="fw-bold">Selamat Datang</h4>
-                    <p class="opacity-75 small">Silakan login untuk mulai menyewa</p>
+            <div class="modal-content border-0 animate__animated animate__zoomIn" style="border-radius: 20px; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); color: white;">
 
-                    <form action="<?= base_url('proses-login') ?>" method="post" class="mt-4">
+                <div class="login-bg-shapes">
+                    <div style="width: 50px; height: 50px; top: 10%; left: 10%; animation-delay: 0s;"></div>
+                    <div style="width: 30px; height: 30px; top: 70%; left: 80%; animation-delay: 2s;"></div>
+                    <div style="width: 20px; height: 20px; top: 40%; left: 60%; animation-delay: 4s;"></div>
+                </div>
+
+                <div class="modal-body p-5 text-center">
+                    <div class="animate__animated animate__fadeInDown animate__delay-1s">
+                        <i class="bi bi-person-circle" style="font-size: 3rem;"></i>
+                        <h4 class="fw-bold mt-2">Selamat Datang</h4>
+                        <p class="opacity-75 small">Silakan login untuk mulai menyewa</p>
+                    </div>
+
+                    <form action="<?= base_url('proses-login') ?>" method="post" class="mt-4 animate__animated animate__fadeInUp animate__delay-1s">
                         <div class="mb-3">
                             <input type="text" name="username" class="form-control bg-transparent text-white border-secondary py-2" placeholder="Username" required>
                         </div>
                         <div class="mb-3">
                             <input type="password" name="password" class="form-control bg-transparent text-white border-secondary py-2" placeholder="Password" required>
                         </div>
-                        <button type="submit" class="btn btn-light w-100 fw-bold py-2 rounded-pill mt-3">Masuk Sekarang</button>
+                        <button type="submit" class="btn btn-light w-100 fw-bold py-2 rounded-pill mt-3 shadow-sm">Masuk Sekarang</button>
                     </form>
 
-                    <div class="footer-text mt-3">
-                        Belum punya akun? <a href="<?= site_url('users/create') ?>">Daftar</a>
+                    <div class="footer-text mt-3 animate__animated animate__fadeIn animate__delay-2s">
+                        Belum punya akun? <a href="<?= site_url('users/create') ?>" class="text-info">Daftar</a>
                     </div>
-                    <p class="text-center mt-3">
-                        Lupa password? <a href="https://wa.me/+62 895-0291-8001?text=Halo%20Admin,%20saya%20lupa%20password%20akun%20Ventura%20saya" target="_blank">Hubungi Admin via WhatsApp</a>
+                    <p class="text-center mt-3 small animate__animated animate__fadeIn animate__delay-2s">
+                        Lupa password? <a href="https://wa.me/+6289502918001?text=Halo%20Admin,%20saya%20lupa%20password%20akun%20Ventura%20saya" target="_blank" class="text-success">Hubungi Admin</a>
                     </p>
                 </div>
             </div>

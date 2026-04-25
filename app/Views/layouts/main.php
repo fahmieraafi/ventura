@@ -15,6 +15,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+
+
+
     <style>
         body {
             background: linear-gradient(rgba(0, 0, 0, 0.42), rgba(171, 172, 174, 0.33)),
@@ -203,6 +206,8 @@
             }
         }
     </style>
+
+
 </head>
 
 <body>
@@ -282,6 +287,8 @@
                             <?php endif; ?>
                         </a>
 
+
+
                         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark p-2 animate__animated animate__fadeIn" style="width: 300px; max-height: 400px; overflow-y: auto;">
                             <?php if (session()->get('role') == 'admin' || session()->get('role') == 'Admin') : ?>
                                 <li class="px-3 py-2 border-bottom border-secondary mb-2">
@@ -304,6 +311,8 @@
                                 <?php else : ?>
                                     <li class="text-center py-2 text-muted small">Tidak ada pesanan baru</li>
                                 <?php endif; ?>
+
+
 
                                 <li class="px-3 py-2 border-bottom border-secondary my-2">
                                     <h6 class="mb-0 small fw-bold text-danger">Keterlambatan</h6>
@@ -355,7 +364,9 @@
                                 <hr class="dropdown-divider border-secondary">
                             </li>
                             <li><a class="dropdown-item text-danger" href="<?= base_url('logout') ?>"><i class="bi bi-box-arrow-right me-2"></i>Keluar</a></li>
-                            <li><a class="dropdown-item" href="<?= base_url('backup') ?>"><i class="bi bi-download me-2"></i>Backup</a></li>
+                            <?php if (session()->get('role') == 'Admin') : ?>
+                                <li><a class="dropdown-item" href="<?= base_url('backup') ?>"><i class="bi bi-download me-2"></i>Backup</a></li>
+                            <?php endif; ?>
                         </ul>
                     </div>
                 </div>
