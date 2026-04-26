@@ -135,7 +135,7 @@
                         <p class="mb-1 fw-bold small"><i class="bi bi-info-circle-fill me-1"></i> Jasa Booking: Rp 15.000</p>
                         <div class="text-center my-3 p-2 bg-white d-inline-block w-100" style="border-radius: 12px;">
                             <p class="text-dark small fw-bold mb-2">Scan QRIS Ventura di bawah ini:</p>
-                            <img src="<?= base_url('assets/img/ventura.png') ?>" alt="QRIS Pembayaran" class="img-fluid shadow-sm" style="max-width: 180px; border-radius: 8px;">
+                            <img src="<?= base_url('assets/img/ventura Qriss.png') ?>" alt="QRIS Pembayaran" class="img-fluid shadow-sm" style="max-width: 180px; border-radius: 8px;">
                         </div>
                         <div class="d-grid gap-2 mt-2">
                             <a href="https://link.dana.id/minta?full_url=https://qr.dana.id/v1/281012012021061491765024/assets/img/ventura.png/081212418446" target="_blank" class="btn btn-primary btn-sm fw-bold rounded-pill">
