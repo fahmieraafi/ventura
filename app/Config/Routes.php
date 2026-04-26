@@ -73,13 +73,11 @@ $routes->get('riwayat', 'Transaksi::index', $userFilter);         // Lihat riway
 $routes->post('transaksi/simpan', 'Transaksi::simpan', $userFilter); // Proses checkout/booking
 $routes->get('transaksi/hapus_riwayat/(:num)', 'Transaksi::hapus_riwayat/$1', $userFilter); // Hapus catatan
 $routes->get('transaksi/batal/(:num)', 'Transaksi::batal/$1', $userFilter); // Batalkan sewa sebelum dikonfirmasi
-
 // --- FITUR TRANSAKSI ADMIN ---
 // Pengelompokan rute admin agar URL diawali dengan /admin/...
 $routes->group('admin', $adminFilter, function ($routes) {
 
     $routes->get('transaksi', 'Transaksi::kelola'); // Halaman utama manajemen sewa
-
     // Proses konfirmasi dan status
     $routes->get('transaksi/konfirmasi_bayar/(:num)', 'Transaksi::konfirmasi_bayar/$1'); // Validasi bukti bayar
     $routes->get('transaksi/updateStatus/(:num)/(:any)', 'Transaksi::updateStatus/$1/$2'); // Ubah status (Dipinjam/Selesai)

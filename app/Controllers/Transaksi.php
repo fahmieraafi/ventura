@@ -261,6 +261,9 @@ class Transaksi extends BaseController
         return redirect()->back();
     }
 
+
+
+
     /**
      * HAPUS DATA (ADMIN)
      * Menghapus baris transaksi secara permanen
