@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 26 Apr 2026 pada 09.41
+-- Waktu pembuatan: 28 Apr 2026 pada 12.42
 -- Versi server: 10.4.32-MariaDB
 -- Versi PHP: 8.2.12
 
@@ -45,14 +45,15 @@ CREATE TABLE `barang` (
 --
 
 INSERT INTO `barang` (`id_barang`, `nama_barang`, `kategori`, `stok`, `harga_sewa`, `kondisi`, `foto_barang`, `created_at`, `updated_at`, `views`) VALUES
-(1, 'Tenda Dome Kapasitas 4', 'Tenda', 2, 50000.00, 'Baik', '1775965237_cf467619023f4dee7179.png,1775965251_0d4f2f1eca7d66c7210d.png', '2026-04-12 01:48:03', '2026-04-26 07:25:44', 14),
-(2, 'Tracking pool', 'Tracking Pool', 8, 20000.00, 'Baik', '1775965180_2e90ae4b7d87a67e5bf2.png,1775965180_6ddd6344f4fe64209fff.png', '2026-04-12 03:39:40', '2026-04-25 15:23:22', 14),
+(1, 'Tenda Dome Kapasitas 4', 'Tenda', 2, 50000.00, 'Baik', '1775965237_cf467619023f4dee7179.png,1775965251_0d4f2f1eca7d66c7210d.png', '2026-04-12 01:48:03', '2026-04-28 10:12:48', 19),
+(2, 'Tracking pool', 'Tracking Pool', 8, 20000.00, 'Baik', '1775965180_2e90ae4b7d87a67e5bf2.png,1775965180_6ddd6344f4fe64209fff.png', '2026-04-12 03:39:40', '2026-04-28 07:13:00', 23),
 (3, 'Sepatu Lavio', 'Sepatu', 20, 30000.00, 'Baik', '1775965375_70e66a5530020ab8508f.png,1775965388_d6034488336a4aa52373.png', '2026-04-12 03:42:38', '2026-04-18 06:09:46', 3),
-(4, 'Sandal Reward', 'Sandal', -1, 20000.00, 'Baik', '1775965472_ba926e6f5c2fe4e16ea1.png,1775965472_ba7da16fd15565f542fd.png', '2026-04-12 03:44:32', '2026-04-19 08:50:36', 2),
+(4, 'Sandal Reward', 'Sandal', -1, 20000.00, 'Baik', '1775965472_ba926e6f5c2fe4e16ea1.png,1775965472_ba7da16fd15565f542fd.png', '2026-04-12 03:44:32', '2026-04-28 07:10:01', 3),
 (5, 'Sandal TapiLaku', 'Sandal', 23, 20000.00, 'Baik', '1775965521_d71d4e165bf01788919e.png,1775965543_39353c8cf2283053b51f.png', '2026-04-12 03:45:21', '2026-04-18 05:17:01', 3),
-(6, 'Kompor Portable Hi-Cook', 'Kompor', 35, 15000.00, 'Baik', '1775965624_727f125b8a627635b317.png,1775965644_a29b35ad4b6dabc92c2f.png,1775965644_237c804605b7929ab8ec.png', '2026-04-12 03:47:04', '2026-04-24 02:42:18', 5),
+(6, 'Kompor Portable Hi-Cook', 'Kompor', 35, 15000.00, 'Baik', '1775965624_727f125b8a627635b317.png,1775965644_a29b35ad4b6dabc92c2f.png,1775965644_237c804605b7929ab8ec.png', '2026-04-12 03:47:04', '2026-04-27 13:45:17', 9),
 (7, 'Tenda Dome Arpenaz 4P', 'Tenda', 49, 50000.00, 'Baik', '1775965693_c85c2cd3667fc10261c2.png,1775965711_353419dfd56893bed6f5.png,1775965711_30adc7954e1c73f7fca3.png', '2026-04-12 03:48:13', '2026-04-16 06:03:50', 0),
-(8, 'sepatu salomon', 'Sepatu', 30, 50000.00, 'Baik', '1775965763_4eefeacaece93f529162.png', '2026-04-12 03:49:23', '2026-04-24 18:03:53', 1);
+(8, 'sepatu salomon', 'Sepatu', 30, 50000.00, 'Baik', '1775965763_4eefeacaece93f529162.png', '2026-04-12 03:49:23', '2026-04-27 02:01:37', 2),
+(12, 'jaket', 'Jaket', 1, 20000.00, 'Baik', '1777256086_f757b846d979e163fd26.png,1777256086_3b05be8f83deb5aa146e.png,1777256086_e8da8f6736c5407f59a3.png', '2026-04-27 02:14:46', '2026-04-28 07:12:16', 1);
 
 -- --------------------------------------------------------
 
@@ -83,7 +84,8 @@ INSERT INTO `gunung` (`id_gunung`, `nama_gunung`, `lokasi`, `ketinggian`, `statu
 (5, 'Sagara', ' Kampung Sagara, Desa Tenjonagara, Kecamatan Sucinaraja, Kabupaten Garut, Jawa Barat.', 2231, 'Buka', '1777054916_5a1db001ffbd65a79c14.jpg,1777054916_8c6748e6bbac5854eb64.jpg', 'Daya Tarik: Pemandangan langsung ke Kawah Talaga Bodas, pemandangan Gunung Cikuray dan Papandayan, serta \"samudra awan\" yang indah.\r\nJalur Pendakian: Terkenal via Basecamp Sagara (lebih ramai) dan jalur Tajur.\r\nMedan: Cocok untuk pemula dengan vegetasi hutan pinus dan tropis.\r\nEstimasi Waktu: Tektok (tidak menginap) dimungkinkan, namun sering dijadikan tempat camping. \r\nWikipedia\r\nWikipedia\r\n +5\r\nAkses Lokasi:\r\nDari pusat kota Garut, menuju ke arah Kecamatan Sucinaraja.\r\nDapat diakses menggunakan kendaraan pribadi.\r\nAkses jalan menuju basecamp (terutama dari arah Terminal Garut) disarankan melalui Gapura Sadang dan di beberapa titik sempit/ekstrem.', '2026-04-24 18:21:56'),
 (6, 'Guntur', 'Desa Pasawahan, Kecamatan Tarogong Kaler, Kabupaten Garut, Jawa Barat.', 2249, 'Buka', '1777055119_0b4f78ccf8f8c0bf758d.jpg,1777055119_3d3f2166d1d0cb1255ef.jpg', 'Deskripsi Gunung Guntur:\r\nKetinggian: 2.249 meter di atas permukaan laut (mdpl).\r\nKarakteristik: Memiliki medan pasir/kerikil terjal di bagian atas, vegetasi ilalang, dan panorama kawah yang menawan.\r\nAktivitas: Salah satu gunung paling aktif di Jawa pada tahun 1800-an, namun kini aktif secara \"tidur\" sejak erupsi terakhir tahun 1847.\r\nDaya Tarik: Pemandangan matahari terbit, hamparan pasir, dan lokasi camping yang favorit. \r\nWikipedia\r\nWikipedia\r\n +4\r\nLokasi dan Akses:\r\nAlamat: Desa Pasawahan, Kecamatan Tarogong Kaler, Kabupaten Garut, Jawa Barat.\r\nAkses: Dapat dijangkau dari Jakarta/Bandung menuju terminal Garut, dilanjutkan dengan transportasi lokal ke basecamp (contoh: Basecamp Bu Tati/Citiis).\r\nJalur Pendakian: Umumnya melalui jalur Citiis atau jalur lain di kawasan Tarogong Kaler, dengan waktu tempuh 3-4 jam. \r\nwww.tripadvisor.co.id\r\nwww.tripadvisor.co.id\r\n +4\r\nGunung Guntur merupakan tujuan populer bagi pendaki di Jawa Barat, namun pendaki disarankan selalu memeriksa status aktivitas gunung dan mematuhi peraturan, mengingat sebagian area merupakan cagar alam. ', '2026-04-24 18:25:19'),
 (7, 'Bromo', ' Probolinggo, Pasuruan, Lumajang, dan Malang, Jawa Timur.', 2325, 'Buka', '1777055322_091a162593736f4d74b7.jpg,1777055322_e513b132e599c024fd75.jpg', 'Deskripsi Gunung Bromo:\r\nKawah Aktif & Lautan Pasir: Wisatawan dapat mendaki ke bibir kawah yang masih aktif mengeluarkan asap, melintasi hamparan pasir vulkanik yang sering disebut \"Pasir Berbisik\".\r\nGolden Sunrise: Pemandangan matahari terbit yang memukau dari spot seperti Penanjakan, Kingkong Hill, atau Seruni Point.\r\nMedan & Suhu: Kontur berpasir, berbatu, dan terjal. Suhu udara sangat dingin, seringkali di bawah \r\n, membutuhkan pakaian tebal.\r\nKawasan Wisata: Dikelilingi oleh Gunung Batok, Gunung Widodaren, dan Gunung Semeru sebagai latar belakang.\r\nKondisi Fisik: Pemandangan menakjubkan berupa \"negeri di atas awan\" saat matahari terbit. \r\nBATIQA Hotels\r\nBATIQA Hotels\r\n +4\r\nLokasi dan Akses:\r\nAdministrasi: Berada di perbatasan empat kabupaten: Probolinggo, Pasuruan, Lumajang, dan Malang, Jawa Timur.\r\nAkses Utama: Umumnya diakses via Probolinggo (Cemoro Lawang) atau Malang (Tumpang).\r\nTransportasi: Memerlukan kendaraan Jeep 4x4 untuk melintasi lautan pasir. \r\nBATIQA Hotels\r\nBATIQA Hotels\r\n +4\r\nTips Wisata:\r\nGunakan pakaian tebal, syal, sarung tangan, masker (melindungi dari debu pasir), dan sepatu hiking.\r\nWaktu terbaik untuk berkunjung adalah saat musim kemarau untuk memastikan pemandangan sunrise cerah. ', '2026-04-24 18:28:42'),
-(8, 'Samalengoh', 'Blok Gunung Gajah, Desa Gunturmekar, Kec. Tanjungkerta, Kabupaten Sumedang.', 804, 'Buka', '1777055452_938503bc9c8629fb3ad0.jpg,1777055452_b0f51a15d1c2e48fadd3.jpg', 'Info dan Deskripsi Samalengoh Camp:\r\nLokasi: Blok Gunung Gajah, Desa Gunturmekar, Kec. Tanjungkerta, Kabupaten Sumedang.\r\nKetinggian: ± 804 meter di atas permukaan laut (MDPL).\r\nDaya Tarik: Tempat kemping dengan pemandangan perbukitan yang asri dan pemandangan kota Sumedang. Tempat ini terkenal dengan pemandangan matahari terbit (sunrise) yang menawan dan sering dijadikan tempat kemping santai.\r\nAkses: Dapat diakses melalui empat desa, yaitu Desa Gunturmekar, Pamarisen, Sukamaju, dan Cibungur.\r\nFasilitas: Tersedia area camping ground, glamping (glamorous camping), dan spot foto. \r\nEiger Adventure Official\r\nEiger Adventure Official\r\n +4\r\nSamalengoh Camp menjadi alternatif tujuan wisata alam yang sejuk dan tidak terlalu jauh dari pusat kota', '2026-04-24 18:30:52');
+(8, 'Samalengoh', 'Blok Gunung Gajah, Desa Gunturmekar, Kec. Tanjungkerta, Kabupaten Sumedang.', 804, 'Buka', '1777055452_938503bc9c8629fb3ad0.jpg,1777055452_b0f51a15d1c2e48fadd3.jpg', 'Info dan Deskripsi Samalengoh Camp:\r\nLokasi: Blok Gunung Gajah, Desa Gunturmekar, Kec. Tanjungkerta, Kabupaten Sumedang.\r\nKetinggian: ± 804 meter di atas permukaan laut (MDPL).\r\nDaya Tarik: Tempat kemping dengan pemandangan perbukitan yang asri dan pemandangan kota Sumedang. Tempat ini terkenal dengan pemandangan matahari terbit (sunrise) yang menawan dan sering dijadikan tempat kemping santai.\r\nAkses: Dapat diakses melalui empat desa, yaitu Desa Gunturmekar, Pamarisen, Sukamaju, dan Cibungur.\r\nFasilitas: Tersedia area camping ground, glamping (glamorous camping), dan spot foto. \r\nEiger Adventure Official\r\nEiger Adventure Official\r\n +4\r\nSamalengoh Camp menjadi alternatif tujuan wisata alam yang sejuk dan tidak terlalu jauh dari pusat kota', '2026-04-24 18:30:52'),
+(9, 'Semeru', 'Ngampo, Pasrujambe, Lumajang Regency, East Java', 3676, 'Buka', '1777256249_a95cddae32f2232fbaa2.jpg,1777256249_b37d70f1efa86634a2f0.jpg', 'Info Penting Jalur Pendakian Semeru 2026:\r\nStatus: Dibuka terbatas (hanya sampai Ranu Kumbolo) per 24 April 2026 berdasarkan rekomendasi TNBTS.\r\nTitik Awal (Basecamp): Desa Ranu Pani, Lumajang.\r\nBatas Pendakian: Ranu Kumbolo (Pendakian ke puncak Mahameru TIDAK diperbolehkan).\r\nRute Utama: Ranu Pani \r\n Landengan Dowo \r\n Watu Rejeng \r\n Ranu Kumbolo.\r\nEstimasi Waktu: 3-4 jam untuk sampai Ranu Kumbolo. \r\nAntara News jatim\r\nAntara News jatim\r\n +5\r\nLokasi & Geografis:\r\nWilayah: Kabupaten Lumajang dan Kabupaten Malang, Jawa Timur.\r\nKawasan: Taman Nasional Bromo Tengger Semeru (TNBTS).\r\nPuncak: Mahameru.', '2026-04-27 02:17:29');
 
 -- --------------------------------------------------------
 
@@ -107,10 +109,12 @@ CREATE TABLE `pesan` (
 --
 
 INSERT INTO `pesan` (`id_pesan`, `id_pengirim`, `id_penerima`, `isi_pesan`, `file_lampiran`, `tipe_pesan`, `status_baca`, `created_at`) VALUES
-(101, 1, 5, 'ker naon maneh', NULL, 'text', '0', '2026-04-22 16:46:52'),
-(105, 1, 5, 'manehh', NULL, 'text', '0', '2026-04-22 16:48:46'),
-(109, 1, 6, 'maneh naon', NULL, 'text', '0', '2026-04-22 16:50:46'),
-(110, 1, 6, 'po', NULL, 'text', '0', '2026-04-22 17:46:24');
+(117, 10, 2, '', '1777255620_76604e651700c129d93c.png', 'image', '1', '2026-04-27 02:07:00'),
+(118, 10, 2, '', '1777255635_22f9cc6b19479e6b9a62.webm', 'audio', '1', '2026-04-27 02:07:15'),
+(119, 10, 2, 'hello', NULL, 'text', '1', '2026-04-27 02:07:28'),
+(120, 2, 10, 'hai', NULL, 'text', '0', '2026-04-27 02:11:39'),
+(121, 2, 10, '', '1777263399_29bc7ef36c39714f7457.png', 'image', '0', '2026-04-27 04:16:39'),
+(122, 2, 10, '', '1777263410_9a164acfe0d9f579196a.webm', 'audio', '0', '2026-04-27 04:16:50');
 
 -- --------------------------------------------------------
 
@@ -133,6 +137,13 @@ CREATE TABLE `transaksi` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `transaksi`
+--
+
+INSERT INTO `transaksi` (`id_transaksi`, `id_user`, `id_barang`, `tgl_pinjam`, `tgl_kembali`, `total_harga`, `denda`, `status_denda`, `status_transaksi`, `is_read`, `bukti_bayar`, `created_at`, `updated_at`) VALUES
+(68, 10, 1, '2026-04-21', '2026-04-22', 50000.00, 60000.00, 1, 'Selesai', 1, '1777368391_119393619649266481a4.png', '2026-04-28 09:26:31', '2026-04-28 10:12:48');
 
 -- --------------------------------------------------------
 
@@ -158,12 +169,9 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id_user`, `nama`, `username`, `password`, `role`, `foto`, `no_wa`, `ktp`, `created_at`, `updated_at`) VALUES
-(1, 'Administrator', 'fahmi1', '$2y$10$FMQRdH0ecCbZZVWtN2n7/u1YZN/gr7X98Er4NG4sqDAWCXlZwmB6S', 'admin', '1775970874_f8503dff7a155ca040c8.jpg', '08123456789', '1775970837_d3fddb7ccf7a26753806.png', '2026-04-12 01:42:37', '2026-04-22 00:50:06'),
-(2, 'admin', 'fahmi', '$2y$10$9mGagiqKAZX0o1B4Hc5LG.9iNw/UsJimd6jYjjlM069Zh2WxpPZgG', 'admin', '1776315231_f9df6384fd9f006afbb7.png', '1933', '1776315231_2bc39a41324f57c293de.png', '2026-04-12 01:55:09', '2026-04-23 01:23:41'),
-(3, 'ulhaqqq', 'ulhaqq', '$2y$10$ebjKlSgWoSdf2SYNsRCck.R/57Pbkfiz3lTJfz4bHBQCHFhKlvUlm', '', '1776052312_60339fac82c909e4a339.png', '08123456789', '1776052312_378c1f88c234f3735521.png', '2026-04-13 10:51:52', '2026-04-23 01:34:02'),
-(4, 'ijal', 'ijal', '$2y$10$KsN9DPbbPVFjpsfS25DY6.d4pwu/gqrtGuQ9ZYP0bX90Ej.HqxEfa', 'user', '1776395793_48d636d2b42267cb5580.png', '4044848494', '1776235329_273b02958c9c3611a9c2.png', '2026-04-15 13:42:09', '2026-04-17 10:16:33'),
-(5, 'reza', 'reza', '$2y$10$sVXz7Xu7JwizVMBYkjrvjusmO/Uv1ZC8nQAi2mbP..a.LaOHCAsz.', 'user', '1776779335_b599ff928b37b4c9717a.png', '82312632692', '1776779335_69553ca6ddac56917fa3.png', '2026-04-21 20:48:56', '2026-04-21 20:48:56'),
-(6, 'rian', 'rian', '$2y$10$0BNIcuArujS1RxjcMA3kXOFMFGRvBfLeWh8O5AhX.TXDOF85ZoYdq', 'user', '1776779596_25aee46d08c4449ff3b3.png', '087871684300', '1776779596_c28695338b5c44fff355.png', '2026-04-21 20:53:16', '2026-04-21 20:53:16');
+(2, 'administrator', 'fahmi', '$2y$10$FMQRdH0ecCbZZVWtN2n7/u1YZN/gr7X98Er4NG4sqDAWCXlZwmB6S', 'admin', '1777198485_2baf124d588198cbd533.jpg', '08123456789', '1777198485_b4d239da93ae82314bd7.png', '2026-04-26 17:13:44', '2026-04-26 17:25:13'),
+(10, 'raafi', 'raafi', '$2y$10$9dFno4Koc69y9Rd4U0kHHejvrqLGJ6K/woSm/smRWcj.qR8FClyW6', 'user', '1777255150_7247e68e9c90bf74bd3a.png', '1234567890', '1777255150_68b7b835047db0f7c452.png', '2026-04-27 08:59:10', '2026-04-27 08:59:10'),
+(11, 'ulhaqq', 'ulhaqq', '$2y$10$xICAkWBos39hJ1x6WBqPKuQSBOdpOY7nJJbFnfE6FdSTuQ9Adp/T.', 'user', '1777362105_5d666df5d1cfbe136e5a.jpg', '123', '1777362105_5f1b1a4cc2f9f9fef446.png', '2026-04-28 14:41:45', '2026-04-28 14:41:45');
 
 -- --------------------------------------------------------
 
@@ -183,8 +191,10 @@ CREATE TABLE `wishlist` (
 --
 
 INSERT INTO `wishlist` (`id_wishlist`, `id_user`, `id_barang`, `created_at`) VALUES
-(1, 2, 1, '2026-04-20 17:45:17'),
-(2, 5, 1, '2026-04-22 17:32:30');
+(6, 10, 6, '2026-04-27 05:05:49'),
+(7, 10, 2, '2026-04-27 05:07:29'),
+(9, 10, 12, '2026-04-27 16:29:08'),
+(11, 11, 8, '2026-04-28 07:42:19');
 
 --
 -- Indexes for dumped tables
@@ -241,37 +251,37 @@ ALTER TABLE `wishlist`
 -- AUTO_INCREMENT untuk tabel `barang`
 --
 ALTER TABLE `barang`
-  MODIFY `id_barang` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id_barang` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT untuk tabel `gunung`
 --
 ALTER TABLE `gunung`
-  MODIFY `id_gunung` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id_gunung` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT untuk tabel `pesan`
 --
 ALTER TABLE `pesan`
-  MODIFY `id_pesan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=117;
+  MODIFY `id_pesan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=123;
 
 --
 -- AUTO_INCREMENT untuk tabel `transaksi`
 --
 ALTER TABLE `transaksi`
-  MODIFY `id_transaksi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+  MODIFY `id_transaksi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=69;
 
 --
 -- AUTO_INCREMENT untuk tabel `users`
 --
 ALTER TABLE `users`
-  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT untuk tabel `wishlist`
 --
 ALTER TABLE `wishlist`
-  MODIFY `id_wishlist` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_wishlist` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
