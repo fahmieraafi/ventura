@@ -54,13 +54,18 @@
 
     </div>
 
-    <?php if (session()->get('role') === 'user' && isset($total_denda) && $total_denda > 0) : ?>
-        <div class="alert alert-danger border-0 shadow-lg animate__animated animate__shakeX d-flex align-items-center"
-            style="background: rgba(220, 53, 69, 0.2); backdrop-filter: blur(10px); border-radius: 15px; color: #ff8787;">
-            <i class="bi bi-exclamation-triangle-fill me-3 fs-3"></i>
-            <div>
-                <strong class="d-block">Peringatan Denda!</strong>
-                Kamu memiliki total denda sebesar <span class="fw-bold text-white">Rp <?= number_format($total_denda, 0, ',', '.'); ?></span>. Silakan hubungi admin untuk penyelesaian.
+    <?php if (session()->get('role') === 'user' && isset($nominal_denda_dashboard) && $nominal_denda_dashboard > 0) : ?>
+        <div class="alert alert-danger border-0 shadow-lg animate__animated animate__shakeX d-flex align-items-center justify-content-between alert-dismissible fade show"
+            style="background: rgba(220, 53, 69, 0.2); backdrop-filter: blur(10px); border-radius: 15px; color: #ff8787; cursor: pointer;"
+            onclick="location.href='<?= base_url('riwayat') ?>'">
+
+            <div class="d-flex align-items-center">
+                <i class="bi bi-exclamation-triangle-fill me-3 fs-3"></i>
+                <div>
+                    <strong class="d-block">Peringatan Denda!</strong>
+                    Kamu memiliki total denda sebesar <span class="fw-bold text-white">Rp <?= number_format($nominal_denda_dashboard, 0, ',', '.'); ?></span>.
+                    <small class="d-block text-white-50">Klik di sini untuk lihat riwayat pinjam.</small>
+                </div>
             </div>
         </div>
     <?php endif; ?>

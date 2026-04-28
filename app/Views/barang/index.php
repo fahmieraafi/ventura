@@ -37,16 +37,6 @@
                 </a>
             <?php endif; ?>
         <?php endforeach; ?>
-
-        <?php
-        $adaKosong = array_search(null, array_column($listKategori, 'kategori'));
-        if ($adaKosong !== false) :
-        ?>
-            <a href="<?= base_url('barang?kategori='); ?>"
-                class="btn btn-sm rounded-pill px-4 <?= ($kategoriAktif === '') ? 'btn-primary' : 'btn-outline-light'; ?>">
-                Lainnya
-            </a>
-        <?php endif; ?>
     </div>
 
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4" id="containerBarang">
@@ -55,12 +45,22 @@
             $fotoUtama = !empty($listFoto[0]) ? $listFoto[0] : 'tenda.jpg';
         ?>
             <div class="col item-barang">
-                <div class="card h-100 border-0 shadow-sm card-hover bg-white" style="border-radius: 15px; overflow: hidden; transition: 0.3s;">
+                <div class="card h-100 border-0 shadow-sm card-hover bg-white position-relative <?= ($b['stok'] <= 0) ? 'opacity-75' : '' ?>" style="border-radius: 15px; overflow: hidden; transition: 0.3s;">
+
+                    <?php if (isset($_GET['mode']) && $_GET['mode'] == 'pilih_cepat') : ?>
+                        <div class="position-absolute top-0 start-0 m-3" style="z-index: 10;">
+                            <input class="form-check-input border-primary shadow-sm select-cepat" type="checkbox"
+                                data-id="<?= $b['id_barang'] ?>"
+                                data-nama="<?= $b['nama_barang'] ?>"
+                                <?= ($b['stok'] <= 0) ? 'disabled title="Stok Habis"' : '' ?>
+                                style="width: 25px; height: 25px; cursor: <?= ($b['stok'] <= 0) ? 'not-allowed' : 'pointer' ?>;">
+                        </div>
+                    <?php endif; ?>
 
                     <a href="<?= base_url('barang/' . $b['id_barang']) ?>" class="text-center p-3 d-block">
                         <img src="<?= base_url('uploads/barang/' . $fotoUtama) ?>"
                             class="img-fluid"
-                            style="height: 180px; width: 100%; object-fit: contain;"
+                            style="height: 180px; width: 100%; object-fit: contain; <?= ($b['stok'] <= 0) ? 'filter: grayscale(1);' : '' ?>"
                             alt="<?= $b['nama_barang'] ?>">
                     </a>
 
@@ -72,14 +72,9 @@
                         <h5 class="card-title fw-bold nama-barang text-dark mb-1"><?= $b['nama_barang'] ?></h5>
                         <p class="text-muted mb-2">Rp <?= number_format($b['harga_sewa'], 0, ',', '.') ?> / Hari</p>
 
-                        <?php if (strtolower(session()->get('role')) == 'admin') : ?>
-                            <p class="mt-3 text-muted small">
-                                <i class="bi bi-eye"></i> Dilihat <?= $b['views'] ?> kali (Admin Mode)
-                            </p>
-                        <?php endif; ?>
-
                         <div class="mb-2">
                             <p class="small text-secondary mb-1">Stok Tersedia: <b><?= $b['stok']; ?></b></p>
+
                             <?php if ($b['stok'] <= 0) : ?>
                                 <span class="badge bg-danger px-3 py-2" style="border-radius: 8px;">Habis</span>
                             <?php elseif ($b['stok'] <= 3) : ?>
@@ -90,27 +85,26 @@
                         </div>
 
                         <div class="d-grid gap-2 px-2 mt-3">
-                            <?php if (strtolower(session()->get('role')) == 'admin') : ?>
-                                <div class="d-flex gap-2">
-                                    <a href="<?= base_url('barang/edit/' . $b['id_barang']) ?>" class="btn btn-outline-warning btn-sm flex-fill fw-bold rounded-3">Edit</a>
-                                    <a href="<?= base_url('barang/delete/' . $b['id_barang']) ?>" class="btn btn-outline-danger btn-sm flex-fill fw-bold rounded-3" onclick="return confirm('Hapus?')">Hapus</a>
-                                </div>
-                            <?php else : ?>
-                                <a href="<?= base_url('wishlist/tambah/' . $b['id_barang']) ?>" class="btn btn-sm btn-outline-danger border-0 fw-bold rounded-3 mb-1">
-                                    <i class="bi bi-heart-fill me-1"></i> Simpan ke Wishlist
-                                </a>
-
+                            <?php if (strtolower(session()->get('role')) != 'admin') : ?>
                                 <button type="button"
                                     class="btn btn-primary fw-bold py-2 rounded-3 shadow-sm btn-pinjam-sekarang"
                                     <?= ($b['stok'] <= 0) ? 'disabled' : '' ?>
                                     data-bs-toggle="modal"
                                     data-bs-target="#modalPinjam"
                                     data-id="<?= $b['id_barang'] ?>"
-                                    data-nama="<?= $b['nama_barang'] ?>"
-                                    data-harga="<?= $b['harga_sewa'] ?>"
-                                    data-stok="<?= $b['stok'] ?>">
+                                    data-nama="<?= $b['nama_barang'] ?>">
                                     <?= ($b['stok'] <= 0) ? 'Stok Kosong' : 'Pinjam Sekarang' ?>
                                 </button>
+                            <?php endif; ?>
+                            <?php if (session()->get('role') == 'user' || session()->get('role') == 'User') : ?>
+                                <div class="position-absolute top-0 end-0 m-3" style="z-index: 10;">
+                                    <a href="<?= base_url('wishlist/tambah/' . $b['id_barang']) ?>"
+                                        class="btn btn-light shadow-sm rounded-circle p-2 d-flex align-items-center justify-content-center"
+                                        style="width: 40px; height: 40px; transition: 0.3s;"
+                                        title="Simpan ke Wishlist">
+                                        <i class="bi bi-heart-fill text-danger"></i>
+                                    </a>
+                                </div>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -120,7 +114,15 @@
     </div>
 </div>
 
-<div class="modal fade" id="modalPinjam" tabindex="-1" aria-hidden="true" style="z-index: 1070;">
+<?php if (isset($_GET['mode']) && $_GET['mode'] == 'pilih_cepat') : ?>
+    <div class="fixed-bottom p-4 text-center" style="z-index: 3000;">
+        <button id="btnSelesaiPilih" class="btn btn-success btn-lg shadow-lg rounded-pill px-5 fw-bold border-white border-2 animate__animated animate__bounceInUp">
+            <i class="bi bi-check2-circle me-2"></i> Selesai & Kembali ke Form
+        </button>
+    </div>
+<?php endif; ?>
+
+<div class="modal fade" id="modalPinjam" tabindex="-1" aria-hidden="true" style="z-index: 1080;">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg">
             <div class="modal-header bg-primary text-white">
@@ -128,17 +130,17 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
 
-            <form action="<?= base_url('transaksi/simpan') ?>" method="post" enctype="multipart/form-data">
+            <form action="<?= base_url('transaksi/simpan') ?>" method="post" enctype="multipart/form-data" id="formSewa">
                 <?= csrf_field() ?>
                 <div class="modal-body p-4">
-                    <div class="alert alert-warning border-0 shadow-sm mb-4">
-                        <p class="mb-1 fw-bold small"><i class="bi bi-info-circle-fill me-1"></i> Jasa Booking: Rp 15.000</p>
-                        <div class="text-center my-3 p-2 bg-white d-inline-block w-100" style="border-radius: 12px;">
-                            <p class="text-dark small fw-bold mb-2">Scan QRIS Ventura di bawah ini:</p>
-                            <img src="<?= base_url('assets/img/ventura Qriss.png') ?>" alt="QRIS Pembayaran" class="img-fluid shadow-sm" style="max-width: 180px; border-radius: 8px;">
-                        </div>
+                    <div class="alert alert-warning border-0 shadow-sm mb-4 text-center">
+                        <p class="mb-0 fw-bold small">Total Biaya Booking:</p>
+                        <h4 class="fw-bold text-primary mb-1" id="displayTotalBooking">Rp 15.000</h4>
+                        <p class="text-muted small mb-2">(Rp 15.000 x <span id="displayJumlahBarang">1</span> barang)</p>
+
+                        <img src="<?= base_url('assets/img/ventura Qriss.png') ?>" alt="QRIS" class="img-fluid my-2" style="max-width: 150px;">
                         <div class="d-grid gap-2 mt-2">
-                            <a href="https://link.dana.id/minta?full_url=https://qr.dana.id/v1/281012012021061491765024/assets/img/ventura.png/081212418446" target="_blank" class="btn btn-primary btn-sm fw-bold rounded-pill">
+                            <a href="https://link.dana.id/minta?full_url=https://qr.dana.id/v1/281012012021061491765024/assets/img/acb46e61e5cc574b2b66ea75964e5e04.jpg/081212418446" target="_blank" class="btn btn-primary btn-sm fw-bold rounded-pill">
                                 <i class="bi bi-wallet2 me-1"></i> Klik: Bayar Langsung ke DANA
                             </a>
                             <button type="button" class="btn btn-light btn-sm border fw-bold rounded-pill" onclick="copyNomorDANA('081212418446')">
@@ -147,14 +149,18 @@
                         </div>
                     </div>
 
-                    <input type="hidden" name="id_barang" id="id_barang_modal">
-
-                    <div class="row">
-                        <div class="col-md-8 mb-3">
-                            <label class="form-label fw-bold text-dark small">Alat yang disewa:</label>
-                            <input type="text" id="nama_barang_modal" class="form-control bg-light border-0 fw-bold text-primary" readonly>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold text-dark small">Alat yang disewa:</label>
+                        <div id="container-alat-terpilih" class="mb-2 d-flex flex-wrap gap-1">
                         </div>
+                        <a href="<?= base_url('barang?mode=pilih_cepat') ?>" class="btn btn-outline-primary btn-sm w-100 rounded-pill border-2 fw-bold" id="btnTambahBarang">
+                            <i class="bi bi-plus-circle me-1"></i> Ingin menambah barang?
+                        </a>
                     </div>
+
+                    <input type="hidden" name="id_barang" id="id_barang_modal">
+                    <input type="hidden" id="nama_barang_modal">
+                    <div id="hidden-inputs-tambahan"></div>
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
@@ -169,8 +175,7 @@
 
                     <div class="mb-3">
                         <label class="form-label fw-bold text-danger small">Bukti Pembayaran (Wajib)</label>
-                        <input type="file" name="bukti_bayar" id="inputBuktiTransfer" class="form-control shadow-sm" accept="image/*" required onchange="validasiTombolKonfirmasi()">
-                        <small class="text-muted" style="font-size: 0.7rem;">*Upload screenshot bukti transfer booking 15rb.</small>
+                        <input type="file" name="bukti_bayar" id="inputBuktiTransfer" class="form-control shadow-sm" accept="image/*" required>
                     </div>
                 </div>
                 <div class="modal-footer border-0">
@@ -194,42 +199,111 @@
 </style>
 
 <script>
+    // Fungsi salin nomor
     function copyNomorDANA(nomor) {
         navigator.clipboard.writeText(nomor);
-        alert("Nomor DANA " + nomor + " berhasil disalin! Silakan lakukan transfer.");
+        alert("Nomor DANA " + nomor + " berhasil disalin!");
     }
 
-    function validasiTombolKonfirmasi() {
-        const inputFoto = document.getElementById('inputBuktiTransfer');
-        const tombol = document.getElementById('btnKonfirmasiPinjam');
-        tombol.disabled = inputFoto.files.length === 0;
-    }
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const modalElement = document.getElementById('modalPinjam');
+        const modalSewa = new bootstrap.Modal(modalElement);
+        const inputBukti = document.getElementById('inputBuktiTransfer');
+        const btnKonfirmasi = document.getElementById('btnKonfirmasiPinjam');
+        const biayaBookingPerBarang = 15000;
 
-    const searchInput = document.getElementById('inputCariBarang');
-    const cards = document.querySelectorAll('.item-barang');
+        // Fungsi Update Nominal
+        function updateNominalBooking(jumlah) {
+            const total = jumlah * biayaBookingPerBarang;
+            document.getElementById('displayTotalBooking').innerText = 'Rp ' + total.toLocaleString('id-ID');
+            document.getElementById('displayJumlahBarang').innerText = jumlah;
+        }
 
-    searchInput.addEventListener('input', function() {
-        const searchText = this.value.toLowerCase();
-        cards.forEach(card => {
-            const namaBarang = card.querySelector('.nama-barang').innerText.toLowerCase();
-            card.style.display = namaBarang.includes(searchText) ? "" : "none";
+        // 1. Validasi Input File
+        inputBukti.addEventListener('change', function() {
+            btnKonfirmasi.disabled = this.files.length === 0;
         });
-    });
 
-    document.querySelectorAll('.btn-pinjam-sekarang').forEach(button => {
-        button.addEventListener('click', function() {
-            const stokMax = this.getAttribute('data-stok');
-            document.getElementById('id_barang_modal').value = this.getAttribute('data-id');
-            document.getElementById('nama_barang_modal').value = this.getAttribute('data-nama');
+        // 2. Logic Re-open Modal (Setelah Tambah Barang)
+        if (urlParams.get('action') === 'reopen') {
+            const data = JSON.parse(localStorage.getItem('temp_sewa'));
+            if (data) {
+                document.getElementById('id_barang_modal').value = data.id_awal;
+                document.getElementById('nama_barang_modal').value = data.nama_awal;
 
-            const inputJumlah = document.getElementById('jumlah_modal');
-            inputJumlah.value = 1;
-            inputJumlah.setAttribute('max', stokMax);
+                const containerAlat = document.getElementById('container-alat-terpilih');
+                const hiddenArea = document.getElementById('hidden-inputs-tambahan');
 
-            document.getElementById('inputBuktiTransfer').value = '';
-            document.getElementById('btnKonfirmasiPinjam').disabled = true;
+                containerAlat.innerHTML = `<div class="badge bg-primary p-2"><i class="bi bi-star-fill me-1"></i> ${data.nama_awal}</div>`;
+                hiddenArea.innerHTML = '';
+
+                let count = 1;
+                data.tambahan.forEach(item => {
+                    if (item.id !== data.id_awal) {
+                        containerAlat.innerHTML += `<div class="badge bg-success p-2"><i class="bi bi-plus-lg me-1"></i> ${item.nama}</div>`;
+                        hiddenArea.innerHTML += `<input type="hidden" name="barang_tambahan[]" value="${item.id}">`;
+                        count++;
+                    }
+                });
+
+                updateNominalBooking(count);
+                modalSewa.show();
+            }
+        }
+
+        // 3. Simpan data awal sebelum ke mode pilih cepat
+        document.getElementById('btnTambahBarang')?.addEventListener('click', function() {
+            const currentData = {
+                id_awal: document.getElementById('id_barang_modal').value,
+                nama_awal: document.getElementById('nama_barang_modal').value,
+                tambahan: []
+            };
+            localStorage.setItem('temp_sewa', JSON.stringify(currentData));
+        });
+
+        // 4. Selesai Pilih (Mode Checkbox)
+        document.getElementById('btnSelesaiPilih')?.addEventListener('click', function() {
+            let data = JSON.parse(localStorage.getItem('temp_sewa')) || {
+                tambahan: []
+            };
+            document.querySelectorAll('.select-cepat:checked').forEach(cb => {
+                data.tambahan.push({
+                    id: cb.dataset.id,
+                    nama: cb.dataset.nama
+                });
+            });
+            localStorage.setItem('temp_sewa', JSON.stringify(data));
+            window.location.href = "<?= base_url('barang?action=reopen') ?>";
+        });
+
+        // 5. Klik Pinjam Sekarang (Bersihkan data lama)
+        document.querySelectorAll('.btn-pinjam-sekarang').forEach(button => {
+            button.addEventListener('click', function() {
+                localStorage.removeItem('temp_sewa');
+                const id = this.dataset.id;
+                const nama = this.dataset.nama;
+
+                document.getElementById('id_barang_modal').value = id;
+                document.getElementById('nama_barang_modal').value = nama;
+                document.getElementById('hidden-inputs-tambahan').innerHTML = '';
+                document.getElementById('container-alat-terpilih').innerHTML = `<div class="badge bg-primary p-2"><i class="bi bi-star-fill me-1"></i> ${nama}</div>`;
+
+                updateNominalBooking(1);
+                inputBukti.value = '';
+                btnKonfirmasi.disabled = true;
+            });
+        });
+
+        // 6. Fitur Cari
+        document.getElementById('inputCariBarang').addEventListener('input', function() {
+            const search = this.value.toLowerCase();
+            document.querySelectorAll('.item-barang').forEach(card => {
+                const nama = card.querySelector('.nama-barang').innerText.toLowerCase();
+                card.style.display = nama.includes(search) ? "" : "none";
+            });
         });
     });
 </script>
 
-<?= $this->endSection() ?>
+<?= $this->endSection() ?>F

@@ -62,8 +62,6 @@ class Home extends BaseController
         /**
          * 5. LOGIKA GRAFIK PENDAPATAN TAHUNAN (Line Chart):
          * Menghitung uang masuk tiap bulan di tahun berjalan.
-         * Aturan: Selesai = (Biaya Admin 15rb + Harga Sewa + Denda jika lunas).
-         * Status lain (Booking/Dipinjam/Batal) = Flat 15rb (Biaya Admin/DP).
          */
         $dataPendapatan = $db->table('transaksi')
             ->select('MONTH(tgl_pinjam) as bulan')
@@ -79,7 +77,7 @@ class Home extends BaseController
             ->groupBy('MONTH(tgl_pinjam)')
             ->get()->getResultArray();
 
-        // Menyusun array 12 bulan (Jan-Des) dengan nilai awal 0 agar grafik tidak error jika ada bulan kosong
+        // Menyusun array 12 bulan (Jan-Des) dengan nilai awal 0
         $grafik = array_fill(0, 12, 0);
         foreach ($dataPendapatan as $row) {
             $grafik[$row['bulan'] - 1] = (int)$row['total'];
@@ -87,7 +85,6 @@ class Home extends BaseController
 
         /**
          * 5.1 LOGIKA TOTAL PENDAPATAN KESELURUHAN:
-         * Menjumlahkan semua uang masuk dari awal hingga sekarang berdasarkan status transaksi.
          */
         $resPendapatan = $db->table('transaksi')
             ->select('SUM(
@@ -103,7 +100,6 @@ class Home extends BaseController
 
         /**
          * 5.2 LOGIKA GRAFIK PIE (Bulan Ini): 
-         * Melihat kategori barang mana yang paling banyak menghasilkan uang di bulan ini.
          */
         $pendapatanPie = $db->table('transaksi')
             ->select('barang.kategori')
@@ -114,7 +110,7 @@ class Home extends BaseController
                     ELSE 0 
                 END
             ) as total')
-            ->join('barang', 'barang.id_barang = transaksi.id_barang') // Gabung tabel barang untuk ambil nama kategori
+            ->join('barang', 'barang.id_barang = transaksi.id_barang')
             ->where('MONTH(transaksi.tgl_pinjam)', date('m'))
             ->where('YEAR(transaksi.tgl_pinjam)', date('Y'))
             ->whereIn('transaksi.status_transaksi', ['Selesai', 'Booking', 'Dipinjam', 'Dibatalkan'])
@@ -124,7 +120,6 @@ class Home extends BaseController
         $label_pie = array_column($pendapatanPie, 'kategori');
         $data_pie  = array_map('intval', array_column($pendapatanPie, 'total'));
 
-        // Jika bulan ini belum ada transaksi, buat label 'Belum Ada Data' agar grafik tidak kosong melompong
         if (empty($label_pie)) {
             $label_pie = ['Belum Ada Data'];
             $data_pie  = [0];
@@ -133,14 +128,12 @@ class Home extends BaseController
         /**
          * --- LOGIKA REKOMENDASI & TRANSAKSI USER ---
          */
-        // Ambil 4 barang yang paling sering dilihat (populer)
         $rekomendasiBarang = $db->table('barang')
             ->orderBy('views', 'DESC')
             ->limit(4)
             ->get()->getResultArray();
 
         $transaksiAktif = [];
-        // Khusus User: Tampilkan barang apa saja yang sedang mereka pinjam saat ini
         if ($role == 'user' || $role == 'User') {
             $transaksiAktif = $db->table('transaksi')
                 ->select('transaksi.*, barang.nama_barang')
@@ -150,7 +143,6 @@ class Home extends BaseController
                 ->get()->getResultArray();
         }
 
-        // Hitung ulang total terlambat (untuk memastikan akurasi data yang dikirim ke view)
         $today = date('Y-m-d');
         $total_terlambat = $db->table('transaksi')
             ->where('status_transaksi', 'Dipinjam')
@@ -159,27 +151,29 @@ class Home extends BaseController
 
         /**
          * 6. MENYIAPKAN ARRAY DATA:
-         * Mengumpulkan semua hasil hitungan di atas ke dalam satu variabel $data untuk dikirim ke View.
+         * PERBAIKAN: Ganti nama 'total_denda' menjadi 'nominal_denda_dashboard' 
+         * agar tidak bentrok dengan variabel notifikasi lonceng di Navbar.
          */
         $data = [
             'title'              => 'Dashboard Utama',
             'totalBarang'        => $db->table('barang')->countAll(),
             'totalUser'          => $db->table('users')->countAll(),
             'rincianKategori'    => $rincianKategori,
-            'total_denda'        => $total_denda ?? 0,
+            'nominal_denda_dashboard' => $total_denda ?? 0, // Nama diubah agar lonceng tidak salah baca
             'pesanan_baru'       => $pesanan_baru_count,
             'total_terlambat'    => $total_terlambat,
-            'pendapatan_bulanan' => json_encode($grafik), // Encode ke JSON agar dibaca oleh Chart.js
+            'pendapatan_bulanan' => json_encode($grafik),
             'totalPendapatan'    => $totalSeluruhPendapatan,
             'rekomendasi_barang' => $rekomendasiBarang,
             'transaksi_aktif'    => $transaksiAktif,
             'label_pie'          => json_encode($label_pie),
             'data_pie'           => json_encode($data_pie),
+            'notif_count'             => null,
+            'total_denda'             => null,
         ];
 
         /**
          * 7. UPDATE INFO STOK:
-         * Mengambil total stok fisik seluruh barang yang ada di gudang.
          */
         $modelBarang = new \App\Models\BarangModel();
         $data['totalBarang'] = $modelBarang->countAll();
@@ -187,7 +181,6 @@ class Home extends BaseController
 
         /**
          * 8. RENDER VIEW:
-         * Menampilkan file layouts/dashboard.php dengan membawa semua data di atas.
          */
         return view('layouts/dashboard', $data);
     }

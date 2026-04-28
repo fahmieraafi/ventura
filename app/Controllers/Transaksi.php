@@ -143,23 +143,29 @@ class Transaksi extends BaseController
 
     /**
      * PROSES BOOKING (SISI USER)
-     * Menghitung total harga berdasarkan durasi hari dan menyimpan bukti bayar
+     * SEKARANG MENDUKUNG MULTI-BARANG (Utama + Tambahan)
      */
     public function simpan()
     {
-        $id_barang   = $this->request->getPost('id_barang');
-        $tgl_pinjam  = $this->request->getPost('tgl_pinjam');
-        $tgl_kembali = $this->request->getPost('tgl_kembali');
+        // 1. Ambil data input
+        $id_barang_utama = $this->request->getPost('id_barang');
+        $barang_tambahan = $this->request->getPost('barang_tambahan'); // Array dari fitur pilih cepat
+        $tgl_pinjam      = $this->request->getPost('tgl_pinjam');
+        $tgl_kembali     = $this->request->getPost('tgl_kembali');
 
-        $barang = $this->barangModel->find($id_barang);
+        // 2. Gabungkan semua ID barang yang dipilih
+        $daftar_id_barang = [$id_barang_utama];
+        if (!empty($barang_tambahan)) {
+            $daftar_id_barang = array_merge($daftar_id_barang, $barang_tambahan);
+        }
+
+        // 3. Hitung durasi (berlaku untuk semua barang yang dipilih)
         $start  = strtotime($tgl_pinjam);
         $end    = strtotime($tgl_kembali);
-        $durasi = ($end - $start) / (60 * 60 * 24); // Hitung selisih hari
-        if ($durasi <= 0) $durasi = 1; // Minimal sewa 1 hari
+        $durasi = ($end - $start) / (60 * 60 * 24);
+        if ($durasi <= 0) $durasi = 1;
 
-        $total_harga = $durasi * $barang['harga_sewa'];
-
-        // Menangani upload bukti pembayaran
+        // 4. Menangani upload bukti pembayaran (satu bukti untuk semua barang dalam satu sesi)
         $fileBukti = $this->request->getFile('bukti_bayar');
         if ($fileBukti && $fileBukti->isValid() && !$fileBukti->hasMoved()) {
             $namaFoto = $fileBukti->getRandomName();
@@ -168,33 +174,38 @@ class Transaksi extends BaseController
             return redirect()->back()->with('error', 'Bukti pembayaran wajib diunggah.');
         }
 
-        // Simpan data transaksi baru ke database
-        $this->transaksiModel->save([
-            'id_user'           => session()->get('id_user'),
-            'id_barang'         => $id_barang,
-            'tgl_pinjam'        => $tgl_pinjam,
-            'tgl_kembali'       => $tgl_kembali,
-            'total_harga'       => $total_harga,
-            'bukti_bayar'       => $namaFoto,
-            'denda'             => 0,
-            'status_denda'      => 0,
-            'status_transaksi'  => 'Waiting', // Status awal menunggu konfirmasi admin
-            'is_read'           => 0
-        ]);
+        // 5. Loop simpan ke database (setiap barang jadi satu baris transaksi)
+        foreach ($daftar_id_barang as $id_b) {
+            $barang = $this->barangModel->find($id_b);
+            if ($barang) {
+                $total_harga_per_item = $durasi * $barang['harga_sewa'];
 
-        return redirect()->to('/riwayat')->with('success', 'Booking berhasil! Tunggu konfirmasi admin.');
+                $this->transaksiModel->save([
+                    'id_user'          => session()->get('id_user'),
+                    'id_barang'        => $id_b,
+                    'tgl_pinjam'       => $tgl_pinjam,
+                    'tgl_kembali'      => $tgl_kembali,
+                    'total_harga'      => $total_harga_per_item,
+                    'bukti_bayar'      => $namaFoto,
+                    'denda'            => 0,
+                    'status_denda'     => 0,
+                    'status_transaksi' => 'Waiting',
+                    'is_read'          => 0
+                ]);
+            }
+        }
+
+        return redirect()->to('/riwayat')->with('success', 'Booking ' . count($daftar_id_barang) . ' alat berhasil! Tunggu konfirmasi admin.');
     }
 
     /**
      * KONFIRMASI BAYAR (ADMIN)
-     * Mengubah status menjadi Booking dan OTOMATIS mengurangi stok barang
      */
     public function konfirmasi_bayar($id)
     {
         $transaksi = $this->transaksiModel->find($id);
         if ($transaksi) {
             $this->transaksiModel->update($id, ['status_transaksi' => 'Booking']);
-            // Mengurangi stok barang sebanyak 1 (menggunakan raw query agar akurat)
             $this->barangModel->where('id_barang', $transaksi['id_barang'])
                 ->set('stok', 'stok - 1', FALSE)
                 ->update();
@@ -205,7 +216,6 @@ class Transaksi extends BaseController
 
     /**
      * UPDATE STATUS UMUM (ADMIN)
-     * Mengubah status transaksi, jika Selesai maka OTOMATIS mengembalikan stok barang
      */
     public function updateStatus($id, $status)
     {
@@ -213,7 +223,6 @@ class Transaksi extends BaseController
         if ($transaksi) {
             $this->transaksiModel->update($id, ['status_transaksi' => $status]);
             if ($status == 'Selesai') {
-                // Mengembalikan stok barang karena barang sudah kembali ke gudang
                 $this->barangModel->where('id_barang', $transaksi['id_barang'])
                     ->set('stok', 'stok + 1', FALSE)
                     ->update();
@@ -225,7 +234,6 @@ class Transaksi extends BaseController
 
     /**
      * HITUNG DENDA MANUAL (ADMIN)
-     * Tombol manual untuk memaksa sistem menghitung denda saat itu juga
      */
     public function hitungDenda($id)
     {
@@ -243,7 +251,6 @@ class Transaksi extends BaseController
 
     /**
      * LUNASKAN DENDA (ADMIN)
-     * Menandai denda sudah dibayar (Lunas)
      */
     public function lunaskan_denda($id)
     {
@@ -253,7 +260,6 @@ class Transaksi extends BaseController
 
     /**
      * TANDAI SUDAH DIBACA (ADMIN)
-     * Menghilangkan notifikasi pesanan baru untuk admin
      */
     public function markAsRead($id)
     {
@@ -261,12 +267,8 @@ class Transaksi extends BaseController
         return redirect()->back();
     }
 
-
-
-
     /**
      * HAPUS DATA (ADMIN)
-     * Menghapus baris transaksi secara permanen
      */
     public function delete($id)
     {
@@ -276,7 +278,6 @@ class Transaksi extends BaseController
 
     /**
      * HALAMAN EDIT (ADMIN)
-     * Menampilkan form edit transaksi untuk mengubah rincian secara manual
      */
     public function edit($id)
     {
@@ -297,7 +298,6 @@ class Transaksi extends BaseController
 
     /**
      * PROSES UPDATE (ADMIN)
-     * Menyimpan perubahan dari form edit ke database
      */
     public function update($id)
     {
@@ -307,7 +307,6 @@ class Transaksi extends BaseController
 
     /**
      * PEMBATALAN BOOKING (ADMIN)
-     * Membatalkan transaksi dan mengembalikan stok barang yang sebelumnya sudah dikunci
      */
     public function batal($id)
     {
@@ -315,7 +314,6 @@ class Transaksi extends BaseController
         if ($transaksi && $transaksi['status_transaksi'] == 'Booking') {
             $barang = $this->barangModel->find($transaksi['id_barang']);
             if ($barang) {
-                // Kembalikan stok karena batal dipinjam
                 $this->barangModel->update($transaksi['id_barang'], ['stok' => $barang['stok'] + 1]);
             }
             $this->transaksiModel->update($id, ['status_transaksi' => 'Dibatalkan']);

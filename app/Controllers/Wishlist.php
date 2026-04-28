@@ -36,6 +36,10 @@ class Wishlist extends BaseController
         // Menentukan judul halaman
         $data['title'] = "Wishlist Saya";
 
+        // --- TAMBAHAN UNTUK FITUR CENTANG (PILIH CEPAT) ---
+        // Menangkap parameter 'mode' dari URL (misal: ?mode=pilih_cepat)
+        $data['mode'] = $this->request->getGet('mode');
+
         // Mengirim data ke View 'wishlist/index' untuk ditampilkan ke user
         return view('wishlist/index', $data);
     }

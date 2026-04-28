@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link href="<?= base_url('assets/css/bootstrap.min.css') ?>" rel="stylesheet">
     <link href="<?= base_url('assets/bootstrap-icons-1.13.1/bootstrap-icons.css') ?>" rel="stylesheet">
-    <link rel="icon" href="<?= base_url('assets/img/logo ventura.png') ?>" rel="stylesheet">
+    <link rel="icon" href="<?= base_url('assets/img/logo ventura.png') ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -363,10 +363,12 @@
                             <li>
                                 <hr class="dropdown-divider border-secondary">
                             </li>
-                            <li><a class="dropdown-item text-danger" href="<?= base_url('logout') ?>"><i class="bi bi-box-arrow-right me-2"></i>Keluar</a></li>
-                            <?php if (session()->get('role') == 'Admin') : ?>
+                            <?php if (session()->get('role') == 'admin') : ?>
                                 <li><a class="dropdown-item" href="<?= base_url('backup') ?>"><i class="bi bi-download me-2"></i>Backup</a></li>
                             <?php endif; ?>
+
+                            <li><a class="dropdown-item text-danger" href="<?= base_url('logout') ?>"><i class="bi bi-box-arrow-right me-2"></i>Keluar</a></li>
+
                         </ul>
                     </div>
                 </div>
@@ -374,28 +376,6 @@
         </div>
     </nav>
 
-
-    <?php if (session()->get('role') === 'user' && isset($total_denda) && $total_denda > 0) : ?>
-        <div class="alert alert-danger border-0 shadow-lg animate__animated animate__shakeX d-flex align-items-center justify-content-between alert-dismissible fade show"
-            style="background: rgba(220, 53, 69, 0.2); backdrop-filter: blur(10px); border-radius: 15px; color: #ff8787; cursor: pointer;"
-            onclick="location.href='<?= base_url('riwayat') ?>'">
-
-            <div class="d-flex align-items-center">
-                <i class="bi bi-exclamation-triangle-fill me-3 fs-3"></i>
-                <div>
-                    <strong class="d-block">Peringatan Denda!</strong>
-                    Kamu memiliki total denda sebesar <span class="fw-bold text-white">Rp <?= number_format($total_denda, 0, ',', '.'); ?></span>.
-                    <small class="d-block text-white-50">Klik di sini untuk lihat riwayat pinjam.</small>
-                </div>
-            </div>
-
-            <button type="button" class="btn-close btn-close-white"
-                data-bs-dismiss="alert" aria-label="Close"
-                onclick="event.stopPropagation();"
-                style="position: static; margin-left: 15px;">
-            </button>
-        </div>
-    <?php endif; ?>
 
     <div class="main-container">
         <?php if (session()->getFlashdata('success')) : ?>
